@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+<Button
+ android:id="@+id/retrieve_location_button" 
+ android:text="Retrieve Location"
+ android:layout_width="wrap_content" 
+ android:layout_height="wrap_content" 
+ />
+</LinearLayout>
+
+
+
+
+#####
+Java file
+
+
+
+package com.javacodegeeks.android.lbs;
+
+import android.app.Activity;
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.Toast;
+
+public class LbsGeocodingActivity extends Activity {
+    
+    private static final long MINIMUM_DISTANCE_CHANGE_FOR_UPDATES = 1; // in Meters
+    private static final long MINIMUM_TIME_BETWEEN_UPDATES = 1000; // in Milliseconds
+    
+    protected LocationManager locationManager;
+    
+    protected Button retrieveLocationButton;
+    
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+
+        retrieveLocationButton = (Button) findViewById(R.id.retrieve_location_button);
+        
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        
+        locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER, 
+                MINIMUM_TIME_BETWEEN_UPDATES, 
+                MINIMUM_DISTANCE_CHANGE_FOR_UPDATES,
+                new MyLocationListener()
+        );
+        
+    retrieveLocationButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCurrentLocation();
+            }
+    });        
+        
+    }    
+
+    protected void showCurrentLocation() {
+
+        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        if (location != null) {
+            String message = String.format(
+                    "Current Location \n Longitude: %1$s \n Latitude: %2$s",
+                    location.getLongitude(), location.getLatitude()
+            );
+            Toast.makeText(LbsGeocodingActivity.this, message,
+                    Toast.LENGTH_LONG).show();
+        }
+
+    }   
+
+    private class MyLocationListener implements LocationListener {
+
+        public void onLocationChanged(Location location) {
+            String message = String.format(
+                    "New Location \n Longitude: %1$s \n Latitude: %2$s",
+                    location.getLongitude(), location.getLatitude()
+            );
+            Toast.makeText(LbsGeocodingActivity.this, message, Toast.LENGTH_LONG).show();
+        }
+
+        public void onStatusChanged(String s, int i, Bundle b) {
+            Toast.makeText(LbsGeocodingActivity.this, "Provider status changed",
+                    Toast.LENGTH_LONG).show();
+        }
+
+        public void onProviderDisabled(String s) {
+            Toast.makeText(LbsGeocodingActivity.this,
+                    "Provider disabled by the user. GPS turned off",
+                    Toast.LENGTH_LONG).show();
+        }
+
+        public void onProviderEnabled(String s) {
+            Toast.makeText(LbsGeocodingActivity.this,
+                    "Provider enabled by the user. GPS turned on",
+                    Toast.LENGTH_LONG).show();
+        }
+
+    }
+    
+}
+
+
+#####
+Manifest
+
+
+<?xml version="1.0" encoding="utf-8"?>
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="com.javacodegeeks.android.lbs"
+      android:versionCode="1"
+      android:versionName="1.0">
+      
+    <application android:icon="@drawable/icon" android:label="@string/app_name">
+        <activity android:name=".LbsGeocodingActivity"
+                  android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+    
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+ <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" /> 
+ <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    
+    <uses-sdk android:minSdkVersion="3" />
+
+</manifest> 
