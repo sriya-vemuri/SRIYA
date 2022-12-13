@@ -1,0 +1,22 @@
+MaterialApp(
+theme: _lightIsOn ? ThemeData.light() : ThemeData.dark(),
+home:Scaffold(
+  appBar: AppBar(
+  backgroundColor: Theme.of(context).primaryColor,
+  elevation: 0,
+  title: const Text(
+    "Profile  Theme ",
+    style: TextStyle(
+        color: Colors.white, fontSize: 27, fontWeight: FontWeight.bold),
+  ),
+),
+Main.dart
+theme: ThemeData(
+  brightness: Brightness.light,
+    primaryColor: Colors.redAccent,
+    scaffoldBackgroundColor: Colors.white),
+darkTheme: ThemeData(
+  brightness: Brightness.dark,
+  primaryColor: Colors.redAccent,
+  scaffoldBackgroundColor: Colors.black38
+),
